@@ -5,12 +5,12 @@
 #Args         : None
 #Author       : James Cox
 #Email        : jpaulcox@hotmail.com
-#GitHub Repo  : https://github.com/jpaulcox/
+#GitHub Repo  : https://github.com/jpaulcox/kuberntes-cluster-simple
 ###################################################################
 
 servers = [
     {
-        :name => "k8s-head",
+        :name => "k8s-master",
         :type => "master",
         :box => "ubuntu/xenial64",
         :box_version => "20180831.0.0",
@@ -51,14 +51,22 @@ Vagrant.configure("2") do |config|
             config.vm.provider "virtualbox" do |v|
 
                 v.name = opts[:name]
-            	 v.customize ["modifyvm", :id, "--groups", "/Sample Cluster"]
+            	 v.customize ["modifyvm", :id, "--group", "/Sample Cluster"]
                 v.customize ["modifyvm", :id, "--memory", opts[:mem]]
                 v.customize ["modifyvm", :id, "--cpus", opts[:cpu]]
 
             end
 # K8 Configuration scripts
 
+           config.vm.provision "shell", path: "scripts/configureBox.sh"
 
+            # if opts[:type] == "master"
+            #     config.vm.provision "shell", path: "scripts/configureMaster.sh"
+            # else if opts[:type] == "node"
+            #     config.vm.provision "shell", path: "scripts/configureNode.sh"
+            # else
+            #   #Error
+            # end
 
         end
 
