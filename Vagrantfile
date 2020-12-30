@@ -1,42 +1,37 @@
-
-###################################################################
-#Script Name	: Vagrantfile
-#Description	: Kubernetes Cluster - simple
-#Args         : None
-#Author       : James Cox
-#Email        : jpaulcox@hotmail.com
-#GitHub Repo  : https://github.com/jpaulcox/kuberntes-cluster-simple
-###################################################################
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
 
 servers = [
     {
-        :name => "k8s-master",
+        :name => "controlplane",
         :type => "master",
-        :box => "ubuntu/xenial64",
-        :box_version => "20180831.0.0",
+        :box => "aspyatkin/ubuntu-18.04-server",
+        :box_version => "1.0.1",
         :eth1 => "192.168.205.10",
         :mem => "2048",
         :cpu => "2"
     },
     {
-        :name => "k8s-node-1",
+        :name => "node01",
         :type => "node",
-        :box => "ubuntu/xenial64",
-        :box_version => "20180831.0.0",
+        :box => "aspyatkin/ubuntu-18.04-server",
+        :box_version => "1.0.1",
         :eth1 => "192.168.205.11",
         :mem => "2048",
         :cpu => "2"
-    },
-    {
-        :name => "k8s-node-2",
-        :type => "node",
-        :box => "ubuntu/xenial64",
-        :box_version => "20180831.0.0",
-        :eth1 => "192.168.205.12",
-        :mem => "2048",
-        :cpu => "2"
+    # },
+    # {
+    #     :name => "node02",
+    #     :type => "node",
+    #     :box => "aspyatkin/ubuntu-18.04-server",
+    #     :box_version => "20180831.0.0",
+    #     :eth1 => "1.0.1",
+    #     :mem => "2048",
+    #     :cpu => "2"
     }
 ]
+
+
 
 Vagrant.configure("2") do |config|
 
@@ -51,22 +46,36 @@ Vagrant.configure("2") do |config|
             config.vm.provider "virtualbox" do |v|
 
                 v.name = opts[:name]
-            	 v.customize ["modifyvm", :id, "--groups", "/Kubernetes"]
+            	 v.customize ["modifyvm", :id, "--groups", "/DevOps"]
                 v.customize ["modifyvm", :id, "--memory", opts[:mem]]
                 v.customize ["modifyvm", :id, "--cpus", opts[:cpu]]
 
             end
-# K8 Configuration scripts
 
-           config.vm.provision "shell", path: "scripts/configureBox.sh"
 
-            # if opts[:type] == "master"
-            #     config.vm.provision "shell", path: "scripts/configureMaster.sh"
-            # else if opts[:type] == "node"
-            #     config.vm.provision "shell", path: "scripts/configureNode.sh"
-            # else
-            #   #Error
-            # end
+                       # config.vm.provision "shell", path: "scripts/configureBox.sh"
+                        # if opts[:type] == "master"
+                        #     config.vm.provision "shell", path: "scripts/configureMaster.sh"
+                        # else if opts[:type] == "node"
+                        #     config.vm.provision "shell", path: "scripts/configureNode.sh"
+                        # else
+                        #   #Error
+                        # end
+
+
+            config.vm.provision "shell", inline: <<-SHELL
+            cd /vagrant/scripts
+            sh ./base-setup.sh
+            SHELL
+            if opts[:type] == "master"
+                config.vm.provision "shell", inline:<<-SHELL
+                sh ./master.sh
+                SHELL
+            else
+                config.vm.provision "shell", inline:<<-SHELL
+                sh  ./node.sh
+                SHELL
+            end
 
         end
 
