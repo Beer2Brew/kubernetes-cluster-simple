@@ -1,6 +1,20 @@
 #!/bin/bash
-
+###################################################################
+#Script Name	: master.sh
+#Description	: Kubernetes Cluster - simple
+#Args         : None
+#Author       : James Cox
+#Email        : jpaulcox@hotmail.com
+#GitHub Repo  : https://github.com/jpaulcox/kuberntes-cluster-simple
+###################################################################
 ## Move to Master Script
+
+echo "+++++++++++++++++++++++++++++++++++ Starting Docker Installs +++++++++++++++++++++++++++++++++++++"
+# Install docker, kubernetes repository and pgp key,
+# since it will be used in both master & worker VMs
+sudo apt-get install -y docker.io
+
+sudo systemctl restart docker.service
 
 HOST_NAME=$(hostname -s)
 kubeadm init --apiserver-advertise-address=$IP_ADDR --apiserver-cert-extra-sans=$IP_ADDR  --node-name $HOST_NAME --pod-network-cidr=192.168.0.0/16

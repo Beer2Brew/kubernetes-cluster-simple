@@ -1,6 +1,16 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+###################################################################
+#Script Name	: Vagrantfile
+#Description	: Kubernetes Cluster - simple
+#Args         : None
+#Author       : James Cox
+#Email        : jpaulcox@hotmail.com
+#GitHub Repo  : https://github.com/jpaulcox/kuberntes-cluster-simple
+###################################################################
+
+
 servers = [
     {
         :name => "controlplane",
@@ -53,31 +63,30 @@ Vagrant.configure("2") do |config|
             end
 
 
-                       # config.vm.provision "shell", path: "scripts/configureBox.sh"
-                        # if opts[:type] == "master"
-                        #     config.vm.provision "shell", path: "scripts/configureMaster.sh"
-                        # else if opts[:type] == "node"
-                        #     config.vm.provision "shell", path: "scripts/configureNode.sh"
-                        # else
-                        #   #Error
-                        # end
+             config.vm.provision "shell", path: "scripts/base-setup.sh"
+              # if opts[:type] == "master"
+                  # config.vm.provision "shell", path: "scripts/master.sh"
+           # opts[:type] == "node"
+                  # config.vm.provision "shell", path: "scripts/node.sh"
+                #Error
 
 
-            config.vm.provision "shell", inline: <<-SHELL
-            cd /vagrant/scripts
-            sh ./base-setup.sh
-            SHELL
-            if opts[:type] == "master"
-                config.vm.provision "shell", inline:<<-SHELL
-                sh ./master.sh
-                SHELL
-            else
-                config.vm.provision "shell", inline:<<-SHELL
-                sh  ./node.sh
-                SHELL
-            end
 
-        end
+            # config.vm.provision "shell", inline: <<-SHELL
+            # cd /vagrant/scripts
+            # sh ./base-setup.sh
+            # SHELL
+            # if opts[:type] == "master"
+            #     config.vm.provision "shell", inline:<<-SHELL
+            #     sh ./master.sh
+            #     SHELL
+            # else
+            #     config.vm.provision "shell", inline:<<-SHELL
+            #     sh  ./node.sh
+            #     SHELL
+            # end
+
+       end
 
     end
 
