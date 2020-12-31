@@ -18,8 +18,12 @@ sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
 # Edit /etc/fstab file to remove (or comment out) any swap entry,
 # or add the swapoff -a instruction on your bashrc.
 
-##Install openssh server
-# sudo apt install openssh-server
+echo "+++++++++++++++++++++++++++++++++++ Starting Docker Installs +++++++++++++++++++++++++++++++++++++"
+# Install docker, kubernetes repository and pgp key,
+# since it will be used in both master & worker VMs
+sudo apt-get install -y docker.io
+sudo apt install -y net-tools
+sudo systemctl restart docker.service
 
 sudo apt-get update
 #sudo apt-get upgrade -y

@@ -7,27 +7,35 @@
 #Email        : jpaulcox@hotmail.com
 #GitHub Repo  : https://github.com/jpaulcox/kuberntes-cluster-simple
 ###################################################################
-## Move to Master Script
+set -x
 
-echo "+++++++++++++++++++++++++++++++++++ Starting Docker Installs +++++++++++++++++++++++++++++++++++++"
-# Install docker, kubernetes repository and pgp key,
-# since it will be used in both master & worker VMs
-sudo apt-get install -y docker.io
+logger() {
+  DT=$(date '+%Y/%m/%d %H:%M:%S')
+  echo "$DT $0: $1"
+}
+echo "Running"
 
-sudo systemctl restart docker.service
 
+
+echo "Configuring Kubernetes"
 HOST_NAME=$(hostname -s)
-kubeadm init --apiserver-advertise-address=$IP_ADDR --apiserver-cert-extra-sans=$IP_ADDR  --node-name $HOST_NAME --pod-network-cidr=192.168.0.0/16
+echo "IP of this box"
+IP_ADDR=$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/')
+sudo kubeadm init --apiserver-advertise-address=$IP_ADDR --apiserver-cert-extra-sans=$IP_ADDR  --node-name $HOST_NAME --pod-network-cidr=192.168.0.0/16
 #  sudo kubeadm init --apiserver-advertise-address=192.168.205.10 --pod-network-cidr=192.168.0.0/16
 
+echo "copying credentials to regular user - vagrant"
 #copying credentials to regular user - vagrant
 sudo --user=vagrant mkdir -p /home/vagrant/.kube
-cp -i /etc/kubernetes/admin.conf /home/vagrant/.kube/config
-chown $(id -u vagrant):$(id -g vagrant) /home/vagrant/.kube/config
+sudo cp -i /etc/kubernetes/admin.conf /home/vagrant/.kube/config
+# User this for Host System Lens apply
+sudo cp -f /etc/kubernetes/admin.conf /vagrant/config
+sudo chown $(id -u vagrant):$(id -g vagrant) /home/vagrant/.kube/config
 #  Installing a Network Policy Engine (Calico)
 kubectl apply -f https://docs.projectcalico.org/v3.10/manifests/calico.yaml
 
-
+echo "Config for Nodes"
 # Config for Nodes
-sudo kubeadm token create --print-join-command >> /etc/kubeadm_join_cmd.sh
-  chmod +x /etc/kubeadm_join_cmd.sh
+kubeadm token create --print-join-command >> ~/kubeadm_join_cmd.sh
+sudo mv ~/kubeadm_join_cmd.sh /etc/kubeadm_join_cmd.sh
+sudo  chmod +x /etc/kubeadm_join_cmd.sh

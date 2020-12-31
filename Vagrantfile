@@ -29,15 +29,15 @@ servers = [
         :eth1 => "192.168.205.11",
         :mem => "2048",
         :cpu => "2"
-    # },
-    # {
-    #     :name => "node02",
-    #     :type => "node",
-    #     :box => "aspyatkin/ubuntu-18.04-server",
-    #     :box_version => "20180831.0.0",
-    #     :eth1 => "1.0.1",
-    #     :mem => "2048",
-    #     :cpu => "2"
+    },
+    {
+        :name => "node02",
+        :type => "node",
+        :box => "aspyatkin/ubuntu-18.04-server",
+        :box_version => "1.0.1",
+        :eth1 => "192.168.205.12",
+        :mem => "2048",
+        :cpu => "2"
     }
 ]
 
@@ -59,35 +59,15 @@ Vagrant.configure("2") do |config|
             	 v.customize ["modifyvm", :id, "--groups", "/DevOps"]
                 v.customize ["modifyvm", :id, "--memory", opts[:mem]]
                 v.customize ["modifyvm", :id, "--cpus", opts[:cpu]]
-
             end
 
-
+            # System Configurations
              config.vm.provision "shell", path: "scripts/base-setup.sh"
-              # if opts[:type] == "master"
-                  # config.vm.provision "shell", path: "scripts/master.sh"
-           # opts[:type] == "node"
-                  # config.vm.provision "shell", path: "scripts/node.sh"
-                #Error
-
-
-
-            # config.vm.provision "shell", inline: <<-SHELL
-            # cd /vagrant/scripts
-            # sh ./base-setup.sh
-            # SHELL
-            # if opts[:type] == "master"
-            #     config.vm.provision "shell", inline:<<-SHELL
-            #     sh ./master.sh
-            #     SHELL
-            # else
-            #     config.vm.provision "shell", inline:<<-SHELL
-            #     sh  ./node.sh
-            #     SHELL
-            # end
-
-       end
-
-    end
-
+             if opts[:type] == "master"
+               config.vm.provision "shell", path: "scripts/master.sh"
+             else
+               config.vm.provision "shell", path: "scripts/node.sh"
+             end
+           end
+         end
 end
