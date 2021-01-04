@@ -17,27 +17,33 @@ servers = [
         :type => "master",
         :box => "aspyatkin/ubuntu-18.04-server",
         :box_version => "1.0.1",
-        :eth1 => "192.168.205.10",
-        :mem => "2048",
-        :cpu => "2"
+        :network => "public_network", #"private_network, bridged" "public_network" "bridged"
+        :eth1 => "192.168.1.200", # Network needs to match your home network
+        :mem => "3064",
+        :cpu => "2",
+        :role => "" # "Grafana, Wordpress"
     },
     {
         :name => "node01",
         :type => "node",
         :box => "aspyatkin/ubuntu-18.04-server",
         :box_version => "1.0.1",
-        :eth1 => "192.168.205.11",
-        :mem => "2048",
-        :cpu => "2"
+        :network => "public_network",
+        :eth1 => "192.168.1.201",
+        :mem => "3064",
+        :cpu => "2",
+        :role => "" # "Grafana, Wordpress"
     },
     {
         :name => "node02",
         :type => "node",
         :box => "aspyatkin/ubuntu-18.04-server",
         :box_version => "1.0.1",
-        :eth1 => "192.168.205.12",
-        :mem => "2048",
-        :cpu => "2"
+        :network => "public_network",
+        :eth1 => "192.168.1.202",
+        :mem => "3064",
+        :cpu => "2",
+        :role => "" # "Grafana, Wordpress"
     }
 ]
 
@@ -51,12 +57,12 @@ Vagrant.configure("2") do |config|
             config.vm.box = opts[:box]
             config.vm.box_version = opts[:box_version]
             config.vm.hostname = opts[:name]
-            config.vm.network :private_network, ip: opts[:eth1]
+            config.vm.network opts[:network], ip: opts[:eth1]
 
             config.vm.provider "virtualbox" do |v|
 
                 v.name = opts[:name]
-            	 v.customize ["modifyvm", :id, "--groups", "/DevOps"]
+            	 # v.customize ["modifyvm", :id, "--groups", "DevOps"]
                 v.customize ["modifyvm", :id, "--memory", opts[:mem]]
                 v.customize ["modifyvm", :id, "--cpus", opts[:cpu]]
             end

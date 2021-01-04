@@ -23,7 +23,7 @@ echo "+++++++++++++++++++++++++++++++++++ Starting Docker Installs +++++++++++++
 # since it will be used in both master & worker VMs
 sudo apt-get install -y docker.io
 sudo apt install -y net-tools
-sudo systemctl restart docker.service
+#sudo systemctl restart docker.service
 
 sudo apt-get update
 #sudo apt-get upgrade -y
