@@ -57,7 +57,7 @@ Vagrant.configure("2") do |config|
             config.vm.box = opts[:box]
             config.vm.box_version = opts[:box_version]
             config.vm.hostname = opts[:name]
-            config.vm.network opts[:network], ip: opts[:eth1]
+            config.vm.network opts[:network],:bridge => "wlp1s0", ip: opts[:eth1], autoconfig: false
 
             config.vm.provider "virtualbox" do |v|
 
